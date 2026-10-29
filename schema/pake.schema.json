@@ -277,6 +277,11 @@
       "type": "boolean",
       "description": "macOS only: request microphone permission.",
       "default": false
+    },
+    "adblock": {
+      "type": "boolean",
+      "description": "Enable ad blocking and privacy protection.",
+      "default": false
     }
   }
 }

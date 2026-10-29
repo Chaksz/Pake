@@ -339,6 +339,11 @@ ${green('|_|   \\__,_|_|\\_\\___|  can turn any webpage into a desktop app with 
         .default(DEFAULT.microphone)
         .hideHelp(),
     )
+    .addOption(
+      new Option('--adblock', 'Enable ad blocking and privacy protection')
+        .default(DEFAULT.adblock)
+        .hideHelp(),
+    )
     .version(packageJson.version, '-v, --version')
     .configureHelp({
       sortSubcommands: true,

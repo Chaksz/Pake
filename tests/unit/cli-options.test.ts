@@ -128,6 +128,14 @@ describe('CLI options', () => {
     expect(option?.hidden).toBe(true);
   });
 
+  it('registers hidden --adblock option', () => {
+    const option = program.options.find((item) => item.long === '--adblock');
+
+    expect(option).toBeDefined();
+    expect(option?.defaultValue).toBe(false);
+    expect(option?.hidden).toBe(true);
+  });
+
   it('rejects malformed zoom values instead of truncating them', () => {
     const option = program.options.find((item) => item.long === '--zoom');
 

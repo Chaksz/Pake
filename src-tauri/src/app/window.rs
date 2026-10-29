@@ -616,6 +616,11 @@ fn build_window(
     // enable_find gating already applied to the Find menu item.
     window_builder = window_builder.initialization_script(include_str!("../inject/styles.js"));
 
+    if window_config.adblock {
+        let init_script = crate::app::adblock::get_init_cosmetic_script();
+        window_builder = window_builder.initialization_script(&init_script);
+    }
+
     if window_config.enable_find {
         window_builder = window_builder.initialization_script(include_str!("../inject/find.js"));
     }
@@ -875,6 +880,11 @@ fn build_window(
 
     #[cfg(target_os = "windows")]
     crate::app::download::install(&window, download_target)?;
+
+    #[cfg(target_os = "windows")]
+    if window_config.adblock {
+        crate::app::adblock::install(&window)?;
+    }
 
     // Every webview is built here (main window, Cmd+N clones, --new-window and
     // blank two-stage popups), so trackpad history swipes match in all of them.

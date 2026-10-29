@@ -258,6 +258,14 @@ pake https://github.com --name GitHub
 --disabled-web-shortcuts
 ```
 
+#### [adblock]
+
+开启基于 Brave `adblock-rust` 引擎的广告拦截和隐私保护功能。默认为 `false`。开启后将在网络层拦截广告与跟踪脚本，并自动隐藏广告元素。
+
+```shell
+--adblock
+```
+
 #### [enable-find]
 
 启用 Pake 内置的页面查找浮层，默认为 `false`，开启后支持使用 `Cmd/Ctrl+F` 打开查找，`Cmd/Ctrl+G` 跳转到下一个匹配项，`Cmd/Ctrl+Shift+G` 跳转到上一个匹配项。

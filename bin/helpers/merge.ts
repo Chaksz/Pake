@@ -68,6 +68,7 @@ export function buildWindowConfigOverrides(
     min_height: options.minHeight,
     ignore_certificate_errors: options.ignoreCertificateErrors,
     new_window: options.newWindow,
+    adblock: options.adblock,
   };
 }
 
@@ -423,14 +424,12 @@ async function mergeIcons(
         try {
           await fsExtra.copy(resolvedIconPath, iconPath);
         } catch (error) {
-          if (
-            !(
-              error instanceof Error &&
-              error.message.includes(
-                'Source and destination must not be the same',
-              )
+          if (!(
+            error instanceof Error &&
+            error.message.includes(
+              'Source and destination must not be the same',
             )
-          ) {
+          )) {
             throw error;
           }
         }

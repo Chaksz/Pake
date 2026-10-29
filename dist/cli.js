@@ -973,6 +973,7 @@ function buildWindowConfigOverrides(options, platform = asSupportedPlatform(proc
         min_height: options.minHeight,
         ignore_certificate_errors: options.ignoreCertificateErrors,
         new_window: options.newWindow,
+        adblock: options.adblock,
     };
 }
 function asSupportedPlatform(platform) {
@@ -3578,6 +3579,7 @@ const DEFAULT_PAKE_OPTIONS = {
     install: false,
     camera: false,
     microphone: false,
+    adblock: false,
 };
 
 function validateNumberInput(value) {
@@ -3797,6 +3799,9 @@ ${green('|_|   \\__,_|_|\\_\\___|  can turn any webpage into a desktop app with 
         .hideHelp())
         .addOption(new Option('--microphone', 'Request microphone permission on macOS')
         .default(DEFAULT_PAKE_OPTIONS.microphone)
+        .hideHelp())
+        .addOption(new Option('--adblock', 'Enable ad blocking and privacy protection')
+        .default(DEFAULT_PAKE_OPTIONS.adblock)
         .hideHelp())
         .version(packageJson.version, '-v, --version')
         .configureHelp({

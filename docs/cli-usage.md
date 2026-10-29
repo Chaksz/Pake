@@ -258,6 +258,14 @@ Sets whether to disable web shortcuts in the original Pake container, defaults t
 --disabled-web-shortcuts
 ```
 
+#### [adblock]
+
+Enable ad blocking and privacy protection powered by Brave's `adblock-rust`. Default is `false`. When enabled, intrusive ads and tracking scripts are blocked at the network level and ad elements are cosmetically hidden.
+
+```shell
+--adblock
+```
+
 #### [enable-find]
 
 Enable Pake's in-page Find UI. Default is `false`. When enabled, users can press `Cmd/Ctrl+F` to open Find, `Cmd/Ctrl+G` to jump to the next match, and `Cmd/Ctrl+Shift+G` to jump to the previous match.

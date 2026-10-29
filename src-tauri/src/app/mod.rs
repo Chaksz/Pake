@@ -1,3 +1,4 @@
+pub mod adblock;
 #[cfg(target_os = "macos")]
 pub mod auth;
 #[cfg(any(target_os = "linux", test))]

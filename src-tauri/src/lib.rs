@@ -317,6 +317,11 @@ pub fn run_app() {
     let multi_instance = pake_config.multi_instance;
     let multi_window = pake_config.multi_window;
     let _enable_find = pake_config.windows[0].enable_find;
+    let enable_adblock = pake_config
+        .windows
+        .first()
+        .map(|w| w.adblock)
+        .unwrap_or(false);
     let startup_window_revealed = Arc::new(AtomicBool::new(false));
 
     let window_state_plugin = WindowStatePlugin::default()
@@ -372,6 +377,15 @@ pub fn run_app() {
             // cert-bypass path before the real target URL navigates.
             if is_placeholder_startup_url(payload.url()) {
                 return;
+            }
+
+            if enable_adblock {
+                if let Some(css) = app::adblock::get_adblock_engine().get_cosmetic_css(payload.url().as_str()) {
+                    let _ = webview.eval(&format!(
+                        "if (window.__PAKE_INJECT_STYLE__) {{ window.__PAKE_INJECT_STYLE__({:?}, 'pake-adblock-cosmetic'); }}",
+                        css
+                    ));
+                }
             }
 
             let label = webview.label();

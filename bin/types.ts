@@ -170,6 +170,9 @@ export interface PakeCliOptions {
 
   // Request microphone entitlement on macOS, default false
   microphone: boolean;
+
+  // Enable ad blocking and privacy protection, default false
+  adblock: boolean;
 }
 
 export interface PakeAppOptions extends PakeCliOptions {
@@ -212,6 +215,7 @@ export interface WindowConfig {
   min_height: number;
   ignore_certificate_errors: boolean;
   new_window: boolean;
+  adblock: boolean;
 }
 
 export interface PakeConfig {

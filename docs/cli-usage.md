@@ -260,11 +260,19 @@ Sets whether to disable web shortcuts in the original Pake container, defaults t
 
 #### [adblock]
 
-Enable ad blocking and privacy protection powered by Brave's `adblock-rust`. Default is `false`. When enabled, intrusive ads and tracking scripts are blocked at the network level and ad elements are cosmetically hidden.
+Enable ad blocking powered by Brave's [`adblock-rust`](https://github.com/brave/adblock-rust) engine. Default is `false`.
 
 ```shell
 --adblock
 ```
+
+When enabled, Pake downloads [EasyList](https://easylist.to/) and [EasyPrivacy](https://easylist.to/) on first launch, caches them in the app config directory, and refreshes them every three days. A small built-in rule set keeps the most common ad and tracker networks blocked while the lists are unavailable. Point `PAKE_ADBLOCK_LISTS` at a directory containing `easylist.txt` and `easyprivacy.txt` to skip the download entirely.
+
+- **Windows**: every subresource request is checked before it loads, and blocked requests are answered with an empty `403`.
+- **macOS and Linux**: only cosmetic filtering is applied; network-level blocking is not wired up yet.
+- Cosmetic generic class/ID rules are matched against the page DOM, including elements added later, with hostname exceptions respected.
+- Filtering is best-effort: first-party ads and video ads served from the same stream as content may not be distinguishable. Cosmetic procedural operators and scriptlets that need external resources are not fully supported.
+- When `--adblock` is enabled, the app automatically writes diagnostics at runtime to `adblock-debug.log` in the app config directory. On Windows this includes request counts and blocked hostnames; cosmetic-filter counts and generic DOM lookup totals are recorded on all platforms. URLs are logged as hostnames only, without paths or query strings.
 
 #### [enable-find]
 

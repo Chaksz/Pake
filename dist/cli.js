@@ -3800,9 +3800,7 @@ ${green('|_|   \\__,_|_|\\_\\___|  can turn any webpage into a desktop app with 
         .addOption(new Option('--microphone', 'Request microphone permission on macOS')
         .default(DEFAULT_PAKE_OPTIONS.microphone)
         .hideHelp())
-        .addOption(new Option('--adblock', 'Enable ad blocking and privacy protection')
-        .default(DEFAULT_PAKE_OPTIONS.adblock)
-        .hideHelp())
+        .addOption(new Option('--adblock', 'Enable ad blocking and privacy protection').default(DEFAULT_PAKE_OPTIONS.adblock))
         .version(packageJson.version, '-v, --version')
         .configureHelp({
         sortSubcommands: true,

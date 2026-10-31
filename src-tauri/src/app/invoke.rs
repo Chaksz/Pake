@@ -20,6 +20,8 @@ use tauri::Theme;
 static BADGE_COUNT: AtomicI64 = AtomicI64::new(0);
 const MAX_BADGE_COUNT: i64 = 99_999;
 const MAX_BADGE_LABEL_CHARS: usize = 16;
+const MAX_COSMETIC_TOKENS: usize = 128;
+const MAX_COSMETIC_TOKEN_CHARS: usize = 256;
 
 fn normalize_badge_count(count: Option<i64>) -> Option<i64> {
     count.filter(|n| (1..=MAX_BADGE_COUNT).contains(n))
@@ -423,6 +425,56 @@ pub fn send_notification(
     notification::send(&app, &window, &params)
 }
 
+fn validate_cosmetic_tokens(classes: &[String], ids: &[String]) -> Result<(), String> {
+    let token_count = classes.len() + ids.len();
+    if token_count == 0 || token_count > MAX_COSMETIC_TOKENS {
+        return Err(format!(
+            "Adblock cosmetic lookup requires 1 to {MAX_COSMETIC_TOKENS} class/id tokens"
+        ));
+    }
+
+    if classes.iter().chain(ids).any(|token| {
+        token.is_empty()
+            || token.chars().count() > MAX_COSMETIC_TOKEN_CHARS
+            || token.chars().any(char::is_control)
+            || token.chars().any(char::is_whitespace)
+    }) {
+        return Err(format!(
+            "Adblock cosmetic class/id tokens must be non-empty, contain no whitespace or control characters, and be at most {MAX_COSMETIC_TOKEN_CHARS} characters"
+        ));
+    }
+
+    Ok(())
+}
+
+/// Resolves generic cosmetic rules only for classes and ids found in the
+/// calling page's DOM. The page URL is taken from the native webview, not IPC.
+#[command]
+pub fn adblock_hidden_class_id_selectors(
+    window: WebviewWindow,
+    classes: Vec<String>,
+    ids: Vec<String>,
+) -> Result<Vec<String>, String> {
+    validate_cosmetic_tokens(&classes, &ids)?;
+    let page_url = window
+        .url()
+        .map_err(|error| format!("Cannot read current page URL for adblock cosmetics: {error}"))?;
+    if !matches!(page_url.scheme(), "http" | "https") {
+        return Err("Adblock cosmetic lookup requires an HTTP or HTTPS page".into());
+    }
+
+    let engine =
+        crate::app::adblock::current_engine().ok_or("Adblock engine is not initialized")?;
+    let selectors = engine.hidden_class_id_selectors(page_url.as_str(), &classes, &ids);
+    crate::app::adblock::record_generic_cosmetic_lookup(
+        page_url.as_str(),
+        classes.len(),
+        ids.len(),
+        selectors.len(),
+    );
+    Ok(selectors)
+}
+
 #[command]
 pub fn close_notification(app: AppHandle, window: WebviewWindow, id: String) -> Result<(), String> {
     notification::close(&app, &window, &id)
@@ -532,6 +584,29 @@ pub fn webview_navigate(window: WebviewWindow, action: String) -> Result<(), Str
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn cosmetic_lookup_accepts_bounded_dom_tokens() {
+        assert!(validate_cosmetic_tokens(
+            &["banner-wrapper".to_owned()],
+            &["top-floating-banner".to_owned()]
+        )
+        .is_ok());
+    }
+
+    #[test]
+    fn cosmetic_lookup_rejects_empty_oversized_and_invalid_tokens() {
+        assert!(validate_cosmetic_tokens(&[], &[]).is_err());
+        assert!(
+            validate_cosmetic_tokens(&vec!["x".to_owned(); MAX_COSMETIC_TOKENS + 1], &[]).is_err()
+        );
+        assert!(validate_cosmetic_tokens(&["bad token".to_owned()], &[]).is_err());
+        assert!(validate_cosmetic_tokens(
+            &[String::from("x").repeat(MAX_COSMETIC_TOKEN_CHARS + 1)],
+            &[]
+        )
+        .is_err());
+    }
 
     #[test]
     fn concurrent_downloads_of_one_name_reserve_distinct_files() {

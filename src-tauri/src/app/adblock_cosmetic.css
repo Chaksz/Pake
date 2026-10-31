@@ -1,0 +1,83 @@
+/*
+ * Generic cosmetic rules for Pake's adblocker.
+ *
+ * Injected at document start on every page while --adblock is on, before the
+ * first paint, so ad containers never flash. This sheet is intentionally small
+ * and conservative: it only names containers that are unambiguously ads.
+ *
+ * Site-specific selectors are not here. They come from the filter lists at
+ * runtime (see `AdblockEngine::cosmetic_css`), which is where EasyList's tens
+ * of thousands of `example.com##.selector` rules are applied.
+ */
+
+.adsbygoogle,
+.adsbygoogle-noablate,
+.ad-banner,
+.ad-billboard,
+.ad-box,
+.ad-container,
+.ad-placeholder,
+.ad-placement,
+.ad-slot,
+.ad-unit,
+.ad-wrapper,
+.ad_wrapper,
+.ad-zone,
+.advert,
+.advert-container,
+.advertisement,
+.advertisement-block,
+.advertising-container,
+.adslot,
+.adunit,
+.google-ad,
+.google-ads,
+.google-auto-placed,
+.sponsored,
+.sponsored-content,
+.sponsored-post,
+.sponsored-result,
+.native-ad,
+.native-ad-slot,
+.promoted-content,
+.dfp-ad,
+.doubleclick-ad,
+.taboola,
+.outbrain,
+.outbrain-widget,
+[data-ad],
+[data-ad-client],
+[data-ad-slot],
+[data-ad-unit],
+[data-adunit],
+[data-google-query-id],
+[id^="div-gpt-ad"],
+[id^="google_ads_"],
+[id^="google-ads-"],
+[id^="taboola-"],
+[id^="outbrain-"],
+[class^="ad-slot"],
+[class^="ad-unit"],
+[class*=" adsbygoogle"],
+[class*="ad-banner"],
+[class*="ad-container"],
+[class*="ad-placement"],
+[class*="ad-slot"],
+[class*="ad-wrapper"],
+[class*="adsbygoogle"],
+[class*="banner-ad"],
+[class*="dfp-ad"],
+[class*="google-ads"],
+[class*="sponsored-ad"],
+[class*="taboola"],
+[class*="outbrain"],
+[id*="banner-ad"],
+iframe[src*="doubleclick.net"],
+iframe[src*="googlesyndication.com"],
+iframe[src*="googleadservices.com"],
+iframe[src*="adservice.google.com"],
+iframe[src*="amazon-adsystem.com"],
+iframe[src*="taboola.com"],
+iframe[src*="outbrain.com"] {
+  display: none !important;
+}

@@ -35,6 +35,9 @@ tauri-plugin-opener = { version = "2.5.3" }
 tauri-plugin-single-instance = "2.4.0"
 tauri-plugin-notification = "2.3.3"
 adblock = { version = "0.13", default-features = false, features = ["embedded-domain-resolver", "full-regex-handling"] }
+# Fetches the EasyList/EasyPrivacy filter lists. Matches the reqwest build that
+# tauri-plugin-http already links, so this adds no second TLS stack.
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls"] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 block2 = "0.6"

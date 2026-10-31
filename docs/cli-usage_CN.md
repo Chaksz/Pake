@@ -260,11 +260,19 @@ pake https://github.com --name GitHub
 
 #### [adblock]
 
-开启基于 Brave `adblock-rust` 引擎的广告拦截和隐私保护功能。默认为 `false`。开启后将在网络层拦截广告与跟踪脚本，并自动隐藏广告元素。
+开启基于 Brave [`adblock-rust`](https://github.com/brave/adblock-rust) 引擎的广告拦截，默认为 `false`。
 
 ```shell
 --adblock
 ```
+
+开启后，Pake 会在首次启动时下载 [EasyList](https://easylist.to/) 与 [EasyPrivacy](https://easylist.to/)，缓存在应用配置目录中，并每三天自动更新一次。列表不可用时会退回内置的基础规则，常见广告与跟踪域名仍会被拦截。将 `PAKE_ADBLOCK_LISTS` 指向包含 `easylist.txt` 与 `easyprivacy.txt` 的目录可完全跳过下载。
+
+- **Windows**：每个子资源请求在加载前都会经过引擎检查，被拦截的请求返回空 `403`。
+- **macOS 与 Linux**：目前只应用外观过滤，尚未接入网络层拦截。
+- 通用 class/ID 外观规则会与页面 DOM 匹配，包括之后添加的元素，并遵守主机名例外规则。
+- 过滤效果为尽力而为：第一方广告，以及与正常内容共用同一媒体流的视频广告，可能无法区分。需要额外资源的程序化外观规则和脚本注入目前尚未完整支持。
+- 启用 `--adblock` 后，应用运行时会自动将诊断信息写入应用配置目录下的 `adblock-debug.log`。Windows 会记录请求计数和被拦截的主机名；所有平台都会记录外观规则计数和通用 DOM 查询统计。URL 仅记录主机名，不包含路径或查询参数。
 
 #### [enable-find]
 

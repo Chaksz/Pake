@@ -619,6 +619,8 @@ fn build_window(
     if window_config.adblock {
         let init_script = crate::app::adblock::get_init_cosmetic_script();
         window_builder = window_builder.initialization_script(&init_script);
+        window_builder =
+            window_builder.initialization_script(include_str!("../inject/adblock_cosmetic.js"));
     }
 
     if window_config.enable_find {
@@ -878,13 +880,16 @@ fn build_window(
         }
     }
 
-    #[cfg(target_os = "windows")]
-    crate::app::download::install(&window, download_target)?;
-
+    // The adblock filter has to be registered before `download::install`
+    // navigates away from about:blank, otherwise the first page load goes out
+    // unfiltered.
     #[cfg(target_os = "windows")]
     if window_config.adblock {
         crate::app::adblock::install(&window)?;
     }
+
+    #[cfg(target_os = "windows")]
+    crate::app::download::install(&window, download_target)?;
 
     // Every webview is built here (main window, Cmd+N clones, --new-window and
     // blank two-stage popups), so trackpad history swipes match in all of them.

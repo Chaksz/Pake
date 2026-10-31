@@ -4,6 +4,7 @@ fn main() {
     tauri_build::try_build(tauri_build::Attributes::new().app_manifest(
         tauri_build::AppManifest::new().commands(&[
             "download_file",
+            "adblock_hidden_class_id_selectors",
             "send_notification",
             "close_notification",
             "increment_dock_badge",

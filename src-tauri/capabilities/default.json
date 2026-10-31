@@ -5,6 +5,7 @@
   "webviews": ["pake", "pake-*"],
   "permissions": [
     "allow-download-file",
+    "allow-adblock-hidden-class-id-selectors",
     "allow-send-notification",
     "allow-close-notification",
     "allow-increment-dock-badge",

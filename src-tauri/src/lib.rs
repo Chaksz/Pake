@@ -29,9 +29,9 @@ const GDK_BACKEND: &str = "GDK_BACKEND";
 
 use app::{
     invoke::{
-        clear_dock_badge, close_notification, download_file, increment_dock_badge,
-        send_notification, set_dock_badge, set_dock_badge_label, set_title_bar_color, set_zoom,
-        update_theme_mode, webview_navigate,
+        adblock_hidden_class_id_selectors, clear_dock_badge, close_notification, download_file,
+        increment_dock_badge, send_notification, set_dock_badge, set_dock_badge_label,
+        set_title_bar_color, set_zoom, update_theme_mode, webview_navigate,
     },
     setup::{set_global_shortcut, set_system_tray},
     window::{
@@ -380,12 +380,12 @@ pub fn run_app() {
             }
 
             if enable_adblock {
-                if let Some(css) = app::adblock::get_adblock_engine().get_cosmetic_css(payload.url().as_str()) {
-                    let _ = webview.eval(&format!(
-                        "if (window.__PAKE_INJECT_STYLE__) {{ window.__PAKE_INJECT_STYLE__({:?}, 'pake-adblock-cosmetic'); }}",
-                        css
-                    ));
+                if let Some(script) = app::adblock::cosmetic_page_script(payload.url().as_str()) {
+                    if let Err(error) = webview.eval(&script) {
+                        eprintln!("[Pake] Failed to apply adblock cosmetic filters: {error}");
+                    }
                 }
+                app::adblock::flush_debug_stats(payload.url().as_str());
             }
 
             let label = webview.label();
@@ -417,6 +417,7 @@ pub fn run_app() {
     app_builder
         .invoke_handler(tauri::generate_handler![
             download_file,
+            adblock_hidden_class_id_selectors,
             send_notification,
             close_notification,
             increment_dock_badge,
@@ -454,6 +455,12 @@ pub fn run_app() {
                 });
             }
             // --- Menu Construction End ---
+
+            // Load the filter lists before the first window exists, so the very
+            // first page load is already filtered.
+            if enable_adblock {
+                app::adblock::init(app.app_handle());
+            }
 
             let window = set_window(app.app_handle(), &pake_config, &tauri_config)?;
 

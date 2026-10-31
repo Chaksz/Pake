@@ -340,9 +340,10 @@ ${green('|_|   \\__,_|_|\\_\\___|  can turn any webpage into a desktop app with 
         .hideHelp(),
     )
     .addOption(
-      new Option('--adblock', 'Enable ad blocking and privacy protection')
-        .default(DEFAULT.adblock)
-        .hideHelp(),
+      new Option(
+        '--adblock',
+        'Enable ad blocking and privacy protection',
+      ).default(DEFAULT.adblock),
     )
     .version(packageJson.version, '-v, --version')
     .configureHelp({
